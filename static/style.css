@@ -223,27 +223,41 @@ main {
   border-color: var(--black);
 }
 
-/* ── LOADING ──────────────────────────────── */
+/* ── LOADING OVERLAY ──────────────────────── */
 #loading {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--mid);
+  position: fixed;
+  inset: 0;
+  background: rgba(253, 247, 248, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  z-index: 100;
 }
 
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--warm-gray);
+#loading.hidden { display: none !important; }
+
+.loader-logo img {
+  width: 72px;
+  height: 72px;
+  opacity: 0.9;
+}
+
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--warm-gray);
   border-top-color: var(--rose);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1.25rem;
+  animation: spin 0.9s linear infinite;
 }
 
-.loading-text {
-  font-family: var(--serif);
-  font-size: 1rem;
-  font-style: italic;
+.loader-text {
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
   color: var(--mid);
 }
 
