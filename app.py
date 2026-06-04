@@ -31,6 +31,16 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/api/health")
+def health():
+    key = os.environ.get("ANTHROPIC_API_KEY", "")
+    return jsonify({
+        "status": "ok",
+        "api_key_set": bool(key),
+        "api_key_prefix": key[:10] + "..." if key else "NOT SET"
+    })
+
+
 @app.route("/api/compare", methods=["POST"])
 def compare():
     try:
