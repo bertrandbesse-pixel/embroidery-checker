@@ -289,11 +289,11 @@ main {
 .verdict-banner.rejected #verdict-label { color: var(--rose); }
 
 #verdict-reason {
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  font-weight: 300;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 400;
   color: var(--black);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* Score */
@@ -354,10 +354,11 @@ main {
   margin-bottom: 0.4rem;
 }
 .score-desc {
-  font-family: var(--serif);
-  font-size: 0.95rem;
-  font-style: italic;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-style: normal;
   color: var(--black);
+  line-height: 1.5;
 }
 
 /* Section headers */
@@ -431,11 +432,12 @@ main {
 .dim-bar-fill.low  { background: var(--rejected); }
 
 .dim-comment {
-  font-family: var(--serif);
-  font-size: 0.8rem;
-  font-style: italic;
-  color: var(--mid);
-  line-height: 1.5;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-style: normal;
+  color: var(--black);
+  line-height: 1.6;
+  opacity: 0.75;
 }
 
 /* Side by side */
@@ -486,12 +488,12 @@ main {
 .feedback-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
 
 .feedback-card li {
-  font-family: var(--serif);
-  font-size: 0.95rem;
-  font-weight: 300;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 400;
   padding-left: 1.25rem;
   position: relative;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--black);
 }
 
