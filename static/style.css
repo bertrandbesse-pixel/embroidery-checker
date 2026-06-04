@@ -528,20 +528,35 @@ main {
   top: 0.3rem;
 }
 
-/* New comparison button */
-.btn-new {
-  width: 100%;
-  padding: 1.1rem;
-  border: 1px solid var(--warm-gray);
-  background: transparent;
-  color: var(--mid);
+/* Back button */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
   font-family: var(--sans);
-  font-size: 0.62rem;
-  letter-spacing: 0.22em;
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-weight: 400;
+  color: var(--mid);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-  margin-bottom: 3rem;
+  padding: 0.25rem 0;
+  transition: color 0.2s;
+  margin-bottom: 0.5rem;
 }
-.btn-new:hover { border-color: var(--rose); color: var(--rose); }
+.btn-back:hover { color: var(--rose); }
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 2rem 1.25rem;
+  margin-top: auto;
+}
+footer p {
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--light);
+}
