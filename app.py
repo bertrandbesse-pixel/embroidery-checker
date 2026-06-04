@@ -67,39 +67,28 @@ def compare():
         mockup_media = get_media_type(mockup_file)
         photo_media = get_media_type(photo_file)
 
-        prompt = """You are a quality control expert for luxury embroidery at a high-end fashion house (Olympia Le-Tan).
-Your job is to compare a digital mock-up design against a photo of the finished embroidery.
+        prompt = """You are a quality control checker for luxury embroidery. Compare the mock-up to the embroidery photo.
 
-Analyze both images carefully across these dimensions:
+Be VERY brief. Workers need short, practical feedback — no long sentences.
 
-1. OVERALL COMPOSITION — Does the layout, proportions, and placement match?
-2. TEXT ACCURACY — Is any text correctly reproduced? Check spelling, typography style, size, position.
-3. COLOR MATCHING — Are the colors (especially black, white, red threads) accurate to the mock-up?
-4. DETAIL & LINE QUALITY — Are fine lines, illustrations, and intricate elements faithfully rendered?
-5. EDGE DEFINITION — Are the borders and outlines clean and precise?
-
-Respond ONLY with a valid JSON object in this exact format:
+Respond ONLY with this JSON:
 {
   "overall_score": <integer 0-100>,
   "verdict": "<APPROVED | NEEDS REVIEW | REJECTED>",
-  "verdict_reason": "<one sentence summary>",
+  "verdict_reason": "<max 8 words>",
   "dimensions": {
-    "composition": { "score": <0-100>, "comment": "<brief note>" },
-    "text_accuracy": { "score": <0-100>, "comment": "<brief note>" },
-    "color_matching": { "score": <0-100>, "comment": "<brief note>" },
-    "detail_quality": { "score": <0-100>, "comment": "<brief note>" },
-    "edge_definition": { "score": <0-100>, "comment": "<brief note>" }
+    "composition": { "score": <0-100>, "comment": "<max 6 words>" },
+    "text_accuracy": { "score": <0-100>, "comment": "<max 6 words>" },
+    "color_matching": { "score": <0-100>, "comment": "<max 6 words>" },
+    "detail_quality": { "score": <0-100>, "comment": "<max 6 words>" },
+    "edge_definition": { "score": <0-100>, "comment": "<max 6 words>" }
   },
-  "issues": ["<specific issue 1>", "<specific issue 2>"],
-  "strengths": ["<strength 1>", "<strength 2>"]
+  "issues": ["<5 words max>", "<5 words max>"],
+  "strengths": ["<5 words max>", "<5 words max>"]
 }
 
-Verdicts:
-- APPROVED: overall_score >= 85 and no critical issues
-- NEEDS REVIEW: overall_score 65-84 or minor issues found
-- REJECTED: overall_score < 65 or critical flaws
-
-Be precise and professional. The first image is the mock-up, the second is the embroidery photo."""
+Verdicts: APPROVED ≥85, NEEDS REVIEW 65-84, REJECTED <65.
+First image = mock-up. Second = embroidery photo."""
 
         message = client.messages.create(
             model="claude-sonnet-4-6",
