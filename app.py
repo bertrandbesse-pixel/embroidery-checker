@@ -1,20 +1,29 @@
 import os
 import base64
 import json
+import traceback
 from flask import Flask, render_template, request, jsonify
 import anthropic
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024  # 20 MB max upload
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-
-client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-
-MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10 MB
+MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10 MB per image
 
 
-def encode_image(image_data: bytes, media_type: str) -> str:
+def encode_image(image_data: bytes) -> str:
     return base64.standard_b64encode(image_data).decode("utf-8")
+
+
+def get_media_type(file):
+    ct = (file.content_type or "").lower()
+    if "png" in ct:
+        return "image/png"
+    if "webp" in ct:
+        return "image/webp"
+    if "gif" in ct:
+        return "image/gif"
+    return "image/jpeg"
 
 
 @app.route("/")
@@ -24,34 +33,31 @@ def index():
 
 @app.route("/api/compare", methods=["POST"])
 def compare():
-    if "mockup" not in request.files or "photo" not in request.files:
-        return jsonify({"error": "Both images are required"}), 400
+    try:
+        if "mockup" not in request.files or "photo" not in request.files:
+            return jsonify({"error": "Both images are required"}), 400
 
-    mockup_file = request.files["mockup"]
-    photo_file = request.files["photo"]
+        mockup_file = request.files["mockup"]
+        photo_file = request.files["photo"]
 
-    mockup_data = mockup_file.read()
-    photo_data = photo_file.read()
+        mockup_data = mockup_file.read()
+        photo_data = photo_file.read()
 
-    if len(mockup_data) > MAX_IMAGE_SIZE or len(photo_data) > MAX_IMAGE_SIZE:
-        return jsonify({"error": "Image too large (max 10MB)"}), 400
+        if len(mockup_data) > MAX_IMAGE_SIZE or len(photo_data) > MAX_IMAGE_SIZE:
+            return jsonify({"error": "Image too large (max 10MB each)"}), 400
 
-    def get_media_type(file):
-        ct = file.content_type or ""
-        if "png" in ct:
-            return "image/png"
-        if "jpg" in ct or "jpeg" in ct:
-            return "image/jpeg"
-        if "webp" in ct:
-            return "image/webp"
-        return "image/jpeg"
+        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            return jsonify({"error": "ANTHROPIC_API_KEY not configured on server"}), 500
 
-    mockup_b64 = encode_image(mockup_data, get_media_type(mockup_file))
-    photo_b64 = encode_image(photo_data, get_media_type(photo_file))
-    mockup_media = get_media_type(mockup_file)
-    photo_media = get_media_type(photo_file)
+        client = anthropic.Anthropic(api_key=api_key)
 
-    prompt = """You are a quality control expert for luxury embroidery at a high-end fashion house (Olympia Le Tan).
+        mockup_b64 = encode_image(mockup_data)
+        photo_b64 = encode_image(photo_data)
+        mockup_media = get_media_type(mockup_file)
+        photo_media = get_media_type(photo_file)
+
+        prompt = """You are a quality control expert for luxury embroidery at a high-end fashion house (Olympia Le-Tan).
 Your job is to compare a digital mock-up design against a photo of the finished embroidery.
 
 Analyze both images carefully across these dimensions:
@@ -85,56 +91,36 @@ Verdicts:
 
 Be precise and professional. The first image is the mock-up, the second is the embroidery photo."""
 
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1024,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "Here is the original mock-up design:",
-                    },
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": mockup_media,
-                            "data": mockup_b64,
-                        },
-                    },
-                    {
-                        "type": "text",
-                        "text": "Here is the photo of the finished embroidery:",
-                    },
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": photo_media,
-                            "data": photo_b64,
-                        },
-                    },
-                    {
-                        "type": "text",
-                        "text": prompt,
-                    },
-                ],
-            }
-        ],
-    )
+        message = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=1024,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Here is the original mock-up design:"},
+                        {"type": "image", "source": {"type": "base64", "media_type": mockup_media, "data": mockup_b64}},
+                        {"type": "text", "text": "Here is the photo of the finished embroidery:"},
+                        {"type": "image", "source": {"type": "base64", "media_type": photo_media, "data": photo_b64}},
+                        {"type": "text", "text": prompt},
+                    ],
+                }
+            ],
+        )
 
-    raw = message.content[0].text.strip()
-    # Strip markdown code block if present
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    raw = raw.strip()
+        raw = message.content[0].text.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        raw = raw.strip()
 
-    result = json.loads(raw)
-    return jsonify(result)
+        result = json.loads(raw)
+        return jsonify(result)
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
