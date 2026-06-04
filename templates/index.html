@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Embroidery QC — Olympia Le-Tan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- MAIN SCREEN -->
+  <div id="screen-main" class="screen active">
+    <header>
+      <img class="header-logo" src="/static/logo-olt.svg" alt="Olympia Le-Tan" />
+      <span class="header-title">Embroidery Quality Control</span>
+      <div style="width:44px"></div>
+    </header>
+
+    <main>
+
+      <!-- STEP 1: Upload Mock-up -->
+      <section class="upload-card">
+        <div class="card-label">
+          <span class="step-num">I.</span>
+          <span class="step-title">Original mock-up</span>
+          <span class="step-divider"></span>
+        </div>
+        <div class="drop-zone" id="drop-mockup" onclick="document.getElementById('input-mockup').click()">
+          <div class="drop-icon">&#9638;</div>
+          <p>Upload the mock-up</p>
+          <p class="drop-hint">From gallery or files</p>
+        </div>
+        <input type="file" id="input-mockup" accept="image/*" class="hidden" />
+        <div id="preview-mockup" class="preview-wrap hidden">
+          <img id="img-mockup" src="" alt="Mock-up" />
+          <button class="btn-remove" onclick="clearImage('mockup')">&#10005;</button>
+        </div>
+      </section>
+
+      <!-- STEP 2: Embroidery Photo -->
+      <section class="upload-card">
+        <div class="card-label">
+          <span class="step-num">II.</span>
+          <span class="step-title">Embroidery photo</span>
+          <span class="step-divider"></span>
+        </div>
+        <div class="drop-zone" id="drop-photo">
+          <div class="action-row">
+            <button class="btn-action" onclick="document.getElementById('input-camera').click()">
+              &#9679;&ensp;Camera
+            </button>
+            <button class="btn-action" onclick="document.getElementById('input-gallery').click()">
+              &#9636;&ensp;Gallery
+            </button>
+          </div>
+        </div>
+        <input type="file" id="input-camera" accept="image/*" capture="environment" class="hidden" />
+        <input type="file" id="input-gallery" accept="image/*" class="hidden" />
+        <div id="preview-photo" class="preview-wrap hidden">
+          <img id="img-photo" src="" alt="Embroidery" />
+          <button class="btn-remove" onclick="clearImage('photo')">&#10005;</button>
+        </div>
+      </section>
+
+      <!-- COMPARE BUTTON -->
+      <button id="btn-compare" class="btn-compare" disabled>
+        Analyse embroidery
+      </button>
+
+      <!-- LOADING -->
+      <div id="loading" class="hidden">
+        <div class="spinner"></div>
+        <p class="loading-text">Analysing with AI&hellip;</p>
+      </div>
+
+      <!-- RESULTS -->
+      <section id="results" class="hidden">
+
+        <!-- Verdict -->
+        <div id="verdict-banner" class="verdict-banner">
+          <div class="verdict-icon-wrap">
+            <span id="verdict-icon"></span>
+          </div>
+          <div class="verdict-body">
+            <div id="verdict-label"></div>
+            <div id="verdict-reason"></div>
+          </div>
+        </div>
+
+        <!-- Score -->
+        <div class="score-section">
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="52" />
+              <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52"
+                stroke-dasharray="326.7" stroke-dashoffset="326.7" />
+            </svg>
+            <div class="score-text">
+              <span id="score-number">0</span>
+              <span class="score-pct">Match</span>
+            </div>
+          </div>
+          <div class="score-label-block">
+            <p>Overall score</p>
+            <span class="score-desc" id="score-desc"></span>
+          </div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="dimensions">
+          <h3 class="section-head">Breakdown</h3>
+          <div class="dim-list" id="dim-list"></div>
+        </div>
+
+        <!-- Side by side -->
+        <div class="side-by-side">
+          <h3 class="section-head">Side by side</h3>
+          <div class="sbs-grid">
+            <div class="sbs-item">
+              <p class="sbs-label">Mock-up</p>
+              <img id="sbs-mockup" src="" alt="mock-up" />
+            </div>
+            <div class="sbs-item">
+              <p class="sbs-label">Embroidery</p>
+              <img id="sbs-photo" src="" alt="embroidery" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Issues & Strengths -->
+        <div class="feedback-grid">
+          <div class="feedback-card issues-card" id="issues-wrap">
+            <h4>Points to address</h4>
+            <ul id="issues-list"></ul>
+          </div>
+          <div class="feedback-card strengths-card" id="strengths-wrap">
+            <h4>Executed well</h4>
+            <ul id="strengths-list"></ul>
+          </div>
+        </div>
+
+        <button class="btn-new" onclick="resetAll()">New comparison</button>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
