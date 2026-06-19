@@ -558,6 +558,89 @@ main {
   font-weight: 400;
 }
 
+/* Annotated photo section */
+.annotated-card {
+  background: var(--white);
+  border: 1px solid var(--warm-gray);
+  padding: 1.5rem;
+}
+
+.photo-annotate-wrap {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1.25rem;
+}
+
+.photo-annotate-wrap img {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--warm-gray);
+}
+
+#annotations-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.annotation-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--rose);
+  border: 2px solid var(--white);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 500;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.45);
+  line-height: 1;
+}
+
+.issues-list-numbered {
+  list-style: none;
+  counter-reset: issue-counter;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0;
+  margin: 0;
+}
+
+.issues-list-numbered li {
+  counter-increment: issue-counter;
+  position: relative;
+  padding-left: 2.25rem;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--black);
+}
+
+.issues-list-numbered li::before {
+  content: counter(issue-counter);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--rose);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
 /* PDF mockup indicator */
 .pdf-indicator {
   display: flex;

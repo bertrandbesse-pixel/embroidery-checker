@@ -170,16 +170,35 @@ function renderResults(data) {
   }
   document.getElementById("sbs-photo").src = document.getElementById("img-photo").src;
 
-  // Issues
-  const issuesList = document.getElementById("issues-list");
-  issuesList.innerHTML = "";
+  // Annotated photo + numbered issues
+  const annotatedWrap = document.getElementById("annotated-wrap");
+  const annotationsLayer = document.getElementById("annotations-layer");
+  const numberedList = document.getElementById("issues-numbered-list");
+  annotationsLayer.innerHTML = "";
+  numberedList.innerHTML = "";
+
   if (data.issues && data.issues.length > 0) {
-    data.issues.forEach((issue) => {
-      issuesList.innerHTML += `<li>${issue}</li>`;
+    document.getElementById("annotated-photo").src = document.getElementById("img-photo").src;
+    data.issues.forEach((issue, i) => {
+      const num = i + 1;
+      const text = typeof issue === "string" ? issue : issue.text;
+      const x = typeof issue === "object" && issue.x != null ? issue.x : null;
+      const y = typeof issue === "object" && issue.y != null ? issue.y : null;
+
+      numberedList.innerHTML += `<li>${text}</li>`;
+
+      if (x !== null && y !== null) {
+        const marker = document.createElement("div");
+        marker.className = "annotation-marker";
+        marker.style.left = `${x}%`;
+        marker.style.top = `${y}%`;
+        marker.textContent = num;
+        annotationsLayer.appendChild(marker);
+      }
     });
-    document.getElementById("issues-wrap").classList.remove("hidden");
+    annotatedWrap.classList.remove("hidden");
   } else {
-    document.getElementById("issues-wrap").classList.add("hidden");
+    annotatedWrap.classList.add("hidden");
   }
 
   // Strengths
@@ -211,6 +230,10 @@ function resetAll() {
   });
   document.getElementById("pdf-mockup-indicator").classList.add("hidden");
   document.getElementById("sbs-mockup-pdf").classList.add("hidden");
+  document.getElementById("annotated-wrap").classList.add("hidden");
+  document.getElementById("annotations-layer").innerHTML = "";
+  document.getElementById("issues-numbered-list").innerHTML = "";
+  document.getElementById("strengths-wrap").classList.add("hidden");
   document.getElementById("input-mockup").value = "";
   document.getElementById("input-camera").value = "";
   document.getElementById("input-gallery").value = "";

@@ -127,9 +127,15 @@ Respond ONLY with this JSON (no extra text, no markdown):
     "color_matching": { "score": <0-100>, "comment": "<max 6 words>" },
     "face_detail": { "score": <0-100>, "comment": "<max 6 words — eyes/eyebrows, or N/A>" }
   },
-  "issues": ["<name exact letter/location, max 8 words>", "...repeat for each defect found"],
+  "issues": [
+    {"text": "<defect description, max 8 words>", "x": <0-100>, "y": <0-100>},
+    ...one entry per distinct defect
+  ],
   "strengths": ["<max 6 words>", "<max 6 words>"]
 }
+
+For "x" and "y": approximate center of the defective letter or area in the EMBROIDERY PHOTO.
+x=0 is left edge, x=100 is right edge, y=0 is top, y=100 is bottom.
 
 Verdicts: APPROVED ≥85, NEEDS REVIEW 65-84, REJECTED <65.
 First = mock-up design. Second image = embroidery photo (front + spine + back)."""
