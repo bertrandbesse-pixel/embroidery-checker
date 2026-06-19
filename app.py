@@ -8,7 +8,7 @@ import anthropic
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB max upload
 
-APP_VERSION = "1.7"
+APP_VERSION = "1.8"
 
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 MB per file
 
