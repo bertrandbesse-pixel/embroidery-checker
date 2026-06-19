@@ -33,9 +33,13 @@
           <p>Upload the mock-up</p>
           <p class="drop-hint">From gallery or files</p>
         </div>
-        <input type="file" id="input-mockup" accept="image/*" class="hidden" />
+        <input type="file" id="input-mockup" accept="image/*,application/pdf" class="hidden" />
         <div id="preview-mockup" class="preview-wrap hidden">
           <img id="img-mockup" src="" alt="Mock-up" />
+          <div id="pdf-mockup-indicator" class="pdf-indicator hidden">
+            <span class="pdf-icon">PDF</span>
+            <span id="pdf-mockup-name" class="pdf-name"></span>
+          </div>
           <button class="btn-remove" onclick="clearImage('mockup')">&#10005;</button>
         </div>
       </section>
@@ -48,6 +52,7 @@
           <span class="step-divider"></span>
         </div>
         <div class="drop-zone" id="drop-photo">
+          <p class="photo-hint">One photo — front &middot; spine &middot; back</p>
           <div class="action-row">
             <button class="btn-action" onclick="document.getElementById('input-camera').click()">
               &#9679;&ensp;Camera
@@ -126,6 +131,7 @@
             <div class="sbs-item">
               <p class="sbs-label">Mock-up</p>
               <img id="sbs-mockup" src="" alt="mock-up" />
+              <div id="sbs-mockup-pdf" class="sbs-pdf-placeholder hidden">PDF</div>
             </div>
             <div class="sbs-item">
               <p class="sbs-label">Embroidery</p>

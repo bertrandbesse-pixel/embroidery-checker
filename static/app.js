@@ -15,23 +15,48 @@ document.getElementById("input-gallery").addEventListener("change", (e) => {
 function handleFile(file, type) {
   if (!file) return;
   state[type === "mockup" ? "mockupFile" : "photoFile"] = file;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    document.getElementById(`img-${type}`).src = e.target.result;
-    document.getElementById(`preview-${type}`).classList.remove("hidden");
-    document.getElementById(`drop-${type}`).classList.add("hidden");
+
+  const previewEl = document.getElementById(`preview-${type}`);
+  const dropEl = document.getElementById(`drop-${type}`);
+
+  if (type === "mockup" && file.type === "application/pdf") {
+    document.getElementById("img-mockup").classList.add("hidden");
+    document.getElementById("pdf-mockup-name").textContent = file.name;
+    document.getElementById("pdf-mockup-indicator").classList.remove("hidden");
+    previewEl.classList.remove("hidden");
+    dropEl.classList.add("hidden");
     updateCompareBtn();
-  };
-  reader.readAsDataURL(file);
+  } else {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const imgEl = document.getElementById(`img-${type}`);
+      imgEl.src = e.target.result;
+      imgEl.classList.remove("hidden");
+      if (type === "mockup") {
+        document.getElementById("pdf-mockup-indicator").classList.add("hidden");
+      }
+      previewEl.classList.remove("hidden");
+      dropEl.classList.add("hidden");
+      updateCompareBtn();
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 function clearImage(type) {
   state[type === "mockup" ? "mockupFile" : "photoFile"] = null;
-  document.getElementById(`img-${type}`).src = "";
+  const imgEl = document.getElementById(`img-${type}`);
+  imgEl.src = "";
+  imgEl.classList.remove("hidden");
+  if (type === "mockup") {
+    document.getElementById("pdf-mockup-indicator").classList.add("hidden");
+    document.getElementById("input-mockup").value = "";
+  } else {
+    document.getElementById("input-camera").value = "";
+    document.getElementById("input-gallery").value = "";
+  }
   document.getElementById(`preview-${type}`).classList.add("hidden");
   document.getElementById(`drop-${type}`).classList.remove("hidden");
-  document.getElementById(`input-${type === "mockup" ? "mockup" : "camera"}`).value = "";
-  document.getElementById(`input-${type === "photo" ? "gallery" : "mockup"}`).value = "";
   updateCompareBtn();
 }
 
@@ -100,11 +125,11 @@ function renderResults(data) {
 
   // Dimension bars
   const dimNames = {
-    composition: "Composition",
-    text_accuracy: "Text accuracy",
+    text_accuracy:  "Text accuracy",
+    spine_alignment: "Spine alignment",
+    olt_logo:       "OLT logo",
     color_matching: "Color matching",
-    detail_quality: "Detail quality",
-    edge_definition: "Edge definition",
+    face_detail:    "Face detail",
   };
   const dimList = document.getElementById("dim-list");
   dimList.innerHTML = "";
@@ -132,7 +157,17 @@ function renderResults(data) {
   }, 100);
 
   // Side-by-side
-  document.getElementById("sbs-mockup").src = document.getElementById("img-mockup").src;
+  const sbsMockup = document.getElementById("sbs-mockup");
+  const sbsMockupPdf = document.getElementById("sbs-mockup-pdf");
+  if (state.mockupFile && state.mockupFile.type === "application/pdf") {
+    sbsMockup.classList.add("hidden");
+    sbsMockupPdf.textContent = state.mockupFile.name;
+    sbsMockupPdf.classList.remove("hidden");
+  } else {
+    sbsMockup.src = document.getElementById("img-mockup").src;
+    sbsMockup.classList.remove("hidden");
+    sbsMockupPdf.classList.add("hidden");
+  }
   document.getElementById("sbs-photo").src = document.getElementById("img-photo").src;
 
   // Issues
@@ -168,10 +203,14 @@ function resetAll() {
   state.mockupFile = null;
   state.photoFile = null;
   ["mockup", "photo"].forEach((t) => {
-    document.getElementById(`img-${t}`).src = "";
+    const imgEl = document.getElementById(`img-${t}`);
+    imgEl.src = "";
+    imgEl.classList.remove("hidden");
     document.getElementById(`preview-${t}`).classList.add("hidden");
     document.getElementById(`drop-${t}`).classList.remove("hidden");
   });
+  document.getElementById("pdf-mockup-indicator").classList.add("hidden");
+  document.getElementById("sbs-mockup-pdf").classList.add("hidden");
   document.getElementById("input-mockup").value = "";
   document.getElementById("input-camera").value = "";
   document.getElementById("input-gallery").value = "";
