@@ -19,7 +19,8 @@ function handleFile(file, type) {
   const previewEl = document.getElementById(`preview-${type}`);
   const dropEl = document.getElementById(`drop-${type}`);
 
-  if (type === "mockup" && file.type === "application/pdf") {
+  const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+  if (type === "mockup" && isPdf) {
     document.getElementById("img-mockup").classList.add("hidden");
     document.getElementById("pdf-mockup-name").textContent = file.name;
     document.getElementById("pdf-mockup-indicator").classList.remove("hidden");
