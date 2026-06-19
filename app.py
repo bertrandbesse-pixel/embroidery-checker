@@ -84,32 +84,51 @@ def compare():
                 "source": {"type": "base64", "media_type": get_media_type(mockup_file), "data": mockup_b64}
             }
 
-        prompt = """You are a quality control inspector for luxury embroidery at Olympia Le-Tan.
-The embroidery photo shows the piece from multiple angles: FRONT (recto), SPINE (tranche), and BACK (verso) in a single photo.
+        prompt = """You are an expert quality control inspector for luxury hand embroidery at Olympia Le-Tan.
+The embroidery photo shows the piece from multiple angles in one image: FRONT (recto), SPINE (tranche), and BACK (verso).
 
-Be VERY brief. Workers need short, practical feedback — no long sentences.
+INSPECTION RULES — read carefully before scoring:
 
-CRITICAL CHECK POINTS:
-1. TEXT ACCURACY: Check every character letter by letter — especially accents (é, è, ê, à, ç, ù, etc.) and exact spelling
-2. SPINE ALIGNMENT: Text on the spine/tranche must be straight, evenly spaced and perfectly aligned
-3. OLT LOGO: The OLT logo must be present on the spine and correctly positioned
-4. FACES: If faces are present — eyes must look in the same direction, eyebrows must be the same size and shape
-5. COLORS: Thread colors must match the mock-up exactly
+A. LETTERFORM INTEGRITY (most critical)
+   Examine every single letter individually against the mock-up:
+   - Are all strokes complete? Check beginnings and ends of each stroke (no missing terminals, no short ends)
+   - Are vertical strokes truly vertical? Are curved strokes correctly shaped?
+   - Is each letter the same height as its neighbours in the same word?
+   - Are the proportions of each letter correct (not too wide, not too narrow)?
+   - Is letter spacing even throughout each word?
+   Example defects to flag: "W end is short", "R shorter than E from top", "X lower lines broader than upper", "D standing line does not touch curve"
 
-Respond ONLY with this JSON:
+B. SPELLING & ACCENTS
+   Check every character: accents (é, è, ê, à, ç, ù…), spelling, punctuation. Flag any difference.
+
+C. SPINE / TRANCHE
+   - Text must be perfectly straight (no tilt), same height for all letters, even spacing between letters
+   - OLT logo must be present on the spine and correctly positioned
+   Example defect: "S letters have extra space between them"
+
+D. FACES (if present)
+   - Eyes must look in the exact same direction
+   - Both eyebrows must be the same size and shape
+
+E. COLORS
+   - Thread colors must match the mock-up exactly (no shade differences)
+
+Be VERY brief in comments. Workers need specific, actionable feedback — name the exact letter or detail.
+
+Respond ONLY with this JSON (no extra text, no markdown):
 {
   "overall_score": <integer 0-100>,
   "verdict": "<APPROVED | NEEDS REVIEW | REJECTED>",
   "verdict_reason": "<max 8 words>",
   "dimensions": {
-    "text_accuracy": { "score": <0-100>, "comment": "<max 6 words — note any accent/spelling errors>" },
-    "spine_alignment": { "score": <0-100>, "comment": "<max 6 words — text and logo straightness>" },
-    "olt_logo": { "score": <0-100>, "comment": "<max 6 words — logo present and correctly placed>" },
+    "letterform_accuracy": { "score": <0-100>, "comment": "<max 8 words — name specific letters with issues>" },
+    "text_spelling": { "score": <0-100>, "comment": "<max 6 words — accents/spelling or OK>" },
+    "spine_quality": { "score": <0-100>, "comment": "<max 6 words — straightness, spacing, logo>" },
     "color_matching": { "score": <0-100>, "comment": "<max 6 words>" },
-    "face_detail": { "score": <0-100>, "comment": "<max 6 words — eyes/eyebrows, or write N/A if no faces>" }
+    "face_detail": { "score": <0-100>, "comment": "<max 6 words — eyes/eyebrows, or N/A>" }
   },
-  "issues": ["<5 words max>", "<5 words max>"],
-  "strengths": ["<5 words max>", "<5 words max>"]
+  "issues": ["<name exact letter/location, max 8 words>", "...repeat for each defect found"],
+  "strengths": ["<max 6 words>", "<max 6 words>"]
 }
 
 Verdicts: APPROVED ≥85, NEEDS REVIEW 65-84, REJECTED <65.
@@ -117,7 +136,7 @@ First = mock-up design. Second image = embroidery photo (front + spine + back)."
 
         message = client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=1024,
+            max_tokens=2048,
             messages=[
                 {
                     "role": "user",

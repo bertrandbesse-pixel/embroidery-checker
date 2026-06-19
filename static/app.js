@@ -125,11 +125,11 @@ function renderResults(data) {
 
   // Dimension bars
   const dimNames = {
-    text_accuracy:  "Text accuracy",
-    spine_alignment: "Spine alignment",
-    olt_logo:       "OLT logo",
-    color_matching: "Color matching",
-    face_detail:    "Face detail",
+    letterform_accuracy: "Letterform accuracy",
+    text_spelling:       "Spelling & accents",
+    spine_quality:       "Spine quality",
+    color_matching:      "Color matching",
+    face_detail:         "Face detail",
   };
   const dimList = document.getElementById("dim-list");
   dimList.innerHTML = "";
